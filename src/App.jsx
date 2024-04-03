@@ -1,28 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {Calendar, dayjsLocalizer} from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import dayjs from 'dayjs';
 import "dayjs/locale/es";
 import "flatpickr/dist/themes/material_green.css";
-
 import Flatpickr from "react-flatpickr";
+
+import {useDates} from './hooks/useDates'
 
 {/*Cambiar Idioma */}
 dayjs.locale("es")
 
 function App() {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [events, setEvents] = useState([]);
   
+  
+  console.log(dayjs('2024-03-27T12:00').toDate(),'Mensaje por consola') 
   const localizer=dayjsLocalizer(dayjs);
-  const events=[
-    {
-        start:dayjs('2024-03-27T10:00').toDate(),
-        end:dayjs('2024-03-27T12:00').toDate(),
-        title:"Evento 1",
-        hola:'Hola',
-    },
+  // const events=[
+  //   {
+  //       start:dayjs('2024-03-27T10:00').toDate(),
+  //       end:dayjs('2024-03-27T12:00').toDate(),
+  //       title:"Evento 1",
+  //       hola:'Hola',
+  //   },
     
-  ]
+  // ]
+  const [refecth, setRefectch] = useState(false);
+  const{dates,error,getDates,loading}=useDates();
+
+  useEffect(() => {
+    getDates()
+  }, [refecth])
+  console.log(dates,'Dates')
+
+  useEffect(() => {
+    if (dates && dates.length > 0) {
+      const formattedEvents = dates.map(date => ({
+        id: date.id,
+        title: date.title,
+        start: new Date(dayjs(date.start).toDate()),
+        end: new Date(dayjs(date.end).toDate())
+      }));
+      setEvents(formattedEvents);
+    }
+  }, [dates]);
+
+   
+  console.log(events,'Horas formateadas')
+  
+  
+  
+
+
 
   {/*Cambiar Idioma de los detalles*/}
   const messages = {
@@ -40,14 +71,13 @@ function App() {
     noEventsInRange: "Sin eventos"
 };
 const handleSubmit = (event) => {
-  // Prevent default form submission behavior
+  
   event.preventDefault();
 
-  // Log the selected date to the console
-  console.log('Selected Date:', selectedDate);
+  
+  console.log('Selected Date:', dayjs(selectedDate).toDate());
 
-  // Your additional form processing logic here (if needed)
-  // ...
+  
 };
 
 
