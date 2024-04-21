@@ -1,7 +1,7 @@
 import React from 'react'
 import {useState} from 'react'
 
-import {getDatesApi} from '../API/dates'
+import {getDatesApi,addDateApi} from '../API/dates'
 
 export function useDates() {
     const [loading, setLoading] = useState(true);
@@ -12,13 +12,25 @@ export function useDates() {
     const getDates = async ()=>{
 
         try{
-            setLoading(true)
+            setLoading(true);
             const response = await getDatesApi();
             setDates(response)
         }catch{
-            setLoading(false)
-            setError(error)
+            setLoading(false);
+            setError(error);
         }
+    };
+
+    const addDate= async(data)=>{
+      try{
+        setLoading(true);
+        await addDateApi(data);
+        setLoading(false);
+      }catch(error){
+        setLoading(false);
+        throw(error);
+
+      }
     };
 
 
@@ -27,6 +39,7 @@ export function useDates() {
     loading,
     error,
     dates,
-    getDates
+    getDates,
+    addDate,
   }
 }

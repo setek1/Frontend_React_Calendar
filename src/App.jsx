@@ -6,7 +6,7 @@ import "dayjs/locale/es";
 import "flatpickr/dist/themes/material_green.css";
 import Flatpickr from "react-flatpickr";
 
-import {useDates} from './hooks/useDates'
+import {useDates,} from './hooks/useDates'
 
 {/*Cambiar Idioma */}
 dayjs.locale("es")
@@ -14,9 +14,6 @@ dayjs.locale("es")
 function App() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState([]);
-  
-  
-  console.log(dayjs('2024-03-27T12:00').toDate(),'Mensaje por consola') 
   const localizer=dayjsLocalizer(dayjs);
   // const events=[
   //   {
@@ -28,12 +25,12 @@ function App() {
     
   // ]
   const [refecth, setRefectch] = useState(false);
-  const{dates,error,getDates,loading}=useDates();
+  const{dates,error,getDates,loading,addDate}=useDates();
 
   useEffect(() => {
     getDates()
   }, [refecth])
-  console.log(dates,'Dates')
+  
 
   useEffect(() => {
     if (dates && dates.length > 0) {
@@ -49,12 +46,6 @@ function App() {
 
    
   console.log(events,'Horas formateadas')
-  
-  
-  
-
-
-
   {/*Cambiar Idioma de los detalles*/}
   const messages = {
     allDay: "Todo el día",
@@ -70,14 +61,32 @@ function App() {
     event: "Evento",
     noEventsInRange: "Sin eventos"
 };
-const handleSubmit = (event) => {
-  
+const handleSubmit =async (event) => {
+  const title='TestDESDEReact'
   event.preventDefault();
-
+  const start = dayjs(event.target.elements.start.value).toISOString(); // Asegurando que start tenga el formato ISO 8601
+  const end = dayjs(start).add(1, 'hour').toISOString();
+  const formData = {
+    start,
+    end,
+    title,
+  };
+  await addDate(formData);
+  setRefectch(prev => !prev);
+  // console.log('Selected Date:', dayjs(selectedDate).toDate());
   
-  console.log('Selected Date:', dayjs(selectedDate).toDate());
 
-  
+  // const formData = new FormData(event.target);
+
+  // // Crear un objeto para almacenar los datos del formulario
+  // const formDataObject = {};
+  // formData.forEach((value, key) => {
+  //   formDataObject[key] = value;
+    
+  // });
+
+  // // Mostrar los datos del formulario en la consola
+  // console.log('Datos del formulario:', formDataObject.start);
 };
 
 
@@ -96,25 +105,26 @@ const handleSubmit = (event) => {
         />
       </div>
       <div className="h-2/5 w-2/5 p-2">
-        <div className='border-2 border-blue-500 justify-content-center p-3 rounded-md'>
+        <div className='border-2 border-[#e6e6e6] justify-content-center p-3 rounded-md'>
             <div className='pb-4 text-center'>
               <h1 className='text-5xl font-bold'>Agende una hora </h1>
             </div>
             <form  className="flex flex-col w-full  w-auto" onSubmit={handleSubmit}>
               <Flatpickr
-                  className='w-auto border border-blue-500 border-2 rounded-md p-2 font-bold'
+                  className='w-auto border border-[#e6e6e6] border-2 rounded-md p-2 font-bold'
                   value={selectedDate}  
+                  name='start'
                   onChange={date => setSelectedDate(date)}
-                  options={{
-                    dateFormat: "Y-m-d H:i K", // Set desired date format
-                    disableMobile: true, // Disable mobile calendar
+                  options={{ 
+                    dateFormat: "Y-m-d H:i", // Set desired date format
+                     // Disable mobile calendar
                     // Set minimum selectable date
                     enableTime: true,
                     minuteIncrement: 60,
                   }}
                   placeholder="Selecciona una fecha"
               />
-              <button type='submit' className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded mt-4 w-auto">
+              <button type='submit' className="bg-[#3174ad] hover:bg-[#3174ad] text-white font-bold py-2 px-4 border-b-4 border-[#3174ad] hover:border-[#3174ad] rounded mt-4 w-auto">
                 Registrar Fecha
               </button>
             </form>
